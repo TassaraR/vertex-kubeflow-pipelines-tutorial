@@ -1,6 +1,8 @@
 import argparse
 import pickle
 import pandas as pd
+import gcsfs
+import google.auth
 from prepare_data import PreprocessData
 
 
@@ -37,5 +39,11 @@ if __name__ == "__main__":
     ds_test[args.label_col] = y_test
     ds_test.to_csv(args.output_test_path, index=False)
 
-    with open(args.output_encoder_path, "wb") as f:
-        pickle.dump(preproc.get_encoder(), f)
+    if re.findall(r"\/gcs\/.*|gs:\/\/.*", args.output_encoder_path):
+        credentials, project_id = google.auth.default()
+        fs = gcsfs.GCSFileSystem(project=project_id, token=credentials)
+        with fs.open(args.output_encoder_path, "wb") as f:
+            pickle.dump(preproc.get_encoder(), f)
+    else:
+        with open(args.output_encoder_path, "wb") as f:
+            pickle.dump(preproc.get_encoder(), f)
