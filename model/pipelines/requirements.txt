@@ -1,0 +1,5 @@
+kfp==2.0.*
+google-cloud-aiplatform==1.19.0
+urllib3==1.26.12
+tomli==2.0.1
+PyYAML==6.0.*
